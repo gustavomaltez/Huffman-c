@@ -5,7 +5,6 @@ typedef struct noDeFrequencia
 {
     char dado;
     unsigned int frequencia;
-    struct noDeFrequencia *anterior;
     struct noDeFrequencia *proximo;
 } noDeFrequencia;
 
@@ -45,7 +44,6 @@ void adicionarNoDeFrequencia(char dado)
     noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
 
     no->dado = dado;
-    no->anterior = NULL;
     no->proximo = NULL;
     no->frequencia = 1;
 
@@ -63,7 +61,6 @@ void adicionarNoDeFrequencia(char dado)
             noAuxiliar = noAuxiliar->proximo;
         }
 
-        no->anterior = noAuxiliar;
         noAuxiliar->proximo = no;
     }
 }
@@ -95,10 +92,38 @@ void imprimirListaDeFrequencia(noDeFrequencia *no)
     }
 }
 
-//raizFrequenciaEmOrdemCrescente
+//Essa função utiliza um tipo de "Buble Sort" para ordenar os elementos
 void ordenaListaDeFrequenciaEmOrdemCrescente()
-{
+{   
+    noDeFrequencia *noAuxiliar = raizFrequencia;
+    int frequenciaAuxiliar;
+    char dadoAuxiliar;
 
+    //Percorre toda lista ordenando os nós
+    while (noAuxiliar->proximo != NULL)
+    {
+        if (noAuxiliar->proximo->frequencia < noAuxiliar->frequencia)
+        {   
+            //Salva os valores antigos do nó antes de serem alterados
+            frequenciaAuxiliar = noAuxiliar->frequencia;
+            dadoAuxiliar = noAuxiliar->dado;
+
+            //Passa os valores do nó a frente para o nó anterior
+            noAuxiliar->dado = noAuxiliar->proximo->dado;
+            noAuxiliar->frequencia = noAuxiliar->proximo->frequencia;
+
+            //Passa os valores do nó anterior para o nó a frente
+            noAuxiliar->proximo->dado = dadoAuxiliar;
+            noAuxiliar->proximo->frequencia = frequenciaAuxiliar;
+
+            //Volta o nó auxiliar para a raiz para começar outra verificação
+            noAuxiliar = raizFrequencia;
+        }
+
+        //Caso a frequencia do proximo não seja menor que a frequencia do atual
+        //Apenas avança para o proximo nó, fazendo uma nova verificação
+        noAuxiliar = noAuxiliar->proximo;
+    }
 }
 
 int main()
@@ -124,7 +149,9 @@ int main()
 
     //Imprime a lista de frequencia de caracteres (essa função é apenas para debugar)
     imprimirListaDeFrequencia(raizFrequencia);
-
+    ordenaListaDeFrequenciaEmOrdemCrescente();
+    printf("\n\n ---------- \n\n");
+    imprimirListaDeFrequencia(raizFrequencia);
     return 0;
 }
 
