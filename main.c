@@ -5,15 +5,15 @@ typedef struct noDeFrequencia
 {
     char dado;
     unsigned int frequencia;
+    struct noDeFrequencia *anterior;
     struct noDeFrequencia *proximo;
-
 } noDeFrequencia;
 
 noDeFrequencia *raizFrequencia = NULL;
 
 //Faz uma busca na lista encadeada de frequencia de dados por um dado especifico
 noDeFrequencia *buscarNoDeFrequenciaDoDado(noDeFrequencia *no, char dado)
-{   
+{
     //Retorna NULL se o nó passado como parametro for NULL
     if (no == NULL)
     {
@@ -41,11 +41,11 @@ noDeFrequencia *buscarNoDeFrequenciaDoDado(noDeFrequencia *no, char dado)
 
 void adicionarNoDeFrequencia(char dado)
 {
-
     //Cria um novo nó
     noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
 
     no->dado = dado;
+    no->anterior = NULL;
     no->proximo = NULL;
     no->frequencia = 1;
 
@@ -63,7 +63,7 @@ void adicionarNoDeFrequencia(char dado)
             noAuxiliar = noAuxiliar->proximo;
         }
 
-        no->proximo = noAuxiliar->proximo;
+        no->anterior = noAuxiliar;
         noAuxiliar->proximo = no;
     }
 }
@@ -95,6 +95,12 @@ void imprimirListaDeFrequencia(noDeFrequencia *no)
     }
 }
 
+//raizFrequenciaEmOrdemCrescente
+void ordenaListaDeFrequenciaEmOrdemCrescente()
+{
+
+}
+
 int main()
 {
     FILE *pont_arq = fopen("test.txt", "r");
@@ -107,11 +113,11 @@ int main()
 
         //Verifica se o caracter é diferente de -1
         //Nos testes o -1 retorna sempre no final do texto e pode ser confundido com um espaço
-        if(c != -1)
+        if (c != -1)
         {
             contabilizarFrequenciaDoDado(c);
         }
-        
+
         //exibe o caracter lido na tela
 
     } while (c != EOF);
