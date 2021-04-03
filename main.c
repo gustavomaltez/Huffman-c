@@ -14,7 +14,11 @@ noDeFrequencia *raizFrequencia = NULL;
 //Faz uma busca na lista encadeada de frequencia de dados por um dado especifico
 noDeFrequencia *buscarNoDeFrequenciaDoDado(noDeFrequencia *no, char dado)
 {   
-    printf("%c",no->dado);
+    //Retorna NULL se o nó passado como parametro for NULL
+    if (no == NULL)
+    {
+        return NULL;
+    }
 
     //Verifica se o dado é o que estamos procurando
     if (no->dado != dado)
@@ -37,27 +41,29 @@ noDeFrequencia *buscarNoDeFrequenciaDoDado(noDeFrequencia *no, char dado)
 
 void adicionarNoDeFrequencia(char dado)
 {
+
     //Cria um novo nó
-    noDeFrequencia *no;
+    noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
 
     no->dado = dado;
     no->proximo = NULL;
     no->frequencia = 1;
 
-    //Caso a lista esteja vazia aponta a raiz para o nó
+    //Caso a lista esteja vazia adiciona o nó na raiz
     if (raizFrequencia == NULL)
     {
-        raizFrequencia->proximo = no;
+        raizFrequencia = no;
     }
     else
     { //Caso contrario, percorre até o último nó e o adiciona posteriormente
         noDeFrequencia *noAuxiliar = raizFrequencia;
 
-        do
+        while (noAuxiliar->proximo != NULL)
         {
             noAuxiliar = noAuxiliar->proximo;
-        } while (noAuxiliar->proximo != NULL);
+        }
 
+        no->proximo = noAuxiliar->proximo;
         noAuxiliar->proximo = no;
     }
 }
@@ -65,7 +71,8 @@ void adicionarNoDeFrequencia(char dado)
 void contabilizarFrequenciaDoDado(char dado)
 {
     //Busca pelo dado
-    noDeFrequencia *no = buscarNoDeFrequenciaDoDado(raizFrequencia, dado);
+    noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
+    no = buscarNoDeFrequenciaDoDado(raizFrequencia, dado);
 
     //Se o nó não existir, então criamos um
     if (no == NULL)
@@ -78,12 +85,13 @@ void contabilizarFrequenciaDoDado(char dado)
     }
 }
 
-void imprimirLista(noDeFrequencia *no)
-{   
-    printf("DADO: %c, FREQUENCIA %d", no->dado, no->frequencia);
+void imprimirListaDeFrequencia(noDeFrequencia *no)
+{
+    printf("CARACTER: %c | V. NUMERICO: %d | FREQUENCIA %d\n", no->dado, no->dado, no->frequencia);
 
-    while(no->proximo != NULL){
-        return imprimirLista(no->proximo);
+    while (no->proximo != NULL)
+    {
+        return imprimirListaDeFrequencia(no->proximo);
     }
 }
 
@@ -97,13 +105,20 @@ int main()
         //faz a leitura do caracter no arquivo apontado por pont_arq
         c = getc(pont_arq);
 
-        contabilizarFrequenciaDoDado(c);
+        //Verifica se o caracter é diferente de -1
+        //Nos testes o -1 retorna sempre no final do texto e pode ser confundido com um espaço
+        if(c != -1)
+        {
+            contabilizarFrequenciaDoDado(c);
+        }
+        
         //exibe o caracter lido na tela
-        printf("%c", c);
 
     } while (c != EOF);
 
-    imprimirLista(raizFrequencia);
+    //Imprime a lista de frequencia de caracteres (essa função é apenas para debugar)
+    imprimirListaDeFrequencia(raizFrequencia);
+
     return 0;
 }
 
