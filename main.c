@@ -87,12 +87,13 @@ void contabilizarFrequenciaDoDado(char dado)
 
 void imprimirListaDeFrequencia(noDeFrequencia *no)
 {
-    printf("CARACTER: %c | V. NUMERICO: %d | FREQUENCIA %d\n", no->dado, no->dado, no->frequencia);
 
-    while (no->proximo != NULL)
-    {
-        return imprimirListaDeFrequencia(no->proximo);
+    if(no->proximo != NULL)
+    {   
+        imprimirListaDeFrequencia(no->proximo);
+        printf("CARACTER: %c | V. NUMERICO: %d | FREQUENCIA %d\n", no->dado, no->dado, no->frequencia);
     }
+    
 }
 
 //Essa função utiliza um tipo de "Buble Sort" para ordenar os elementos
@@ -188,7 +189,7 @@ int main()
     //Imprime a lista de frequencia de caracteres (essa função é apenas para debugar)
     imprimirListaDeFrequencia(raizFrequencia);
     ordenaListaDeFrequenciaEmOrdemCrescente();
-    // ordenaListaDeFrequenciaEmOrdemCrescente();
+
     printf("\n\n ---------- \n\n");
     imprimirListaDeFrequencia(raizFrequencia);
     return 0;
