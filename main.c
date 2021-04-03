@@ -5,6 +5,7 @@ typedef struct noDeFrequencia
 {
     char dado;
     unsigned int frequencia;
+    struct noDeFrequencia *anterior;
     struct noDeFrequencia *proximo;
 } noDeFrequencia;
 
@@ -44,6 +45,7 @@ void adicionarNoDeFrequencia(char dado)
     noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
 
     no->dado = dado;
+    no->anterior = NULL;
     no->proximo = NULL;
     no->frequencia = 1;
 
@@ -61,6 +63,7 @@ void adicionarNoDeFrequencia(char dado)
             noAuxiliar = noAuxiliar->proximo;
         }
 
+        no->anterior = noAuxiliar;
         noAuxiliar->proximo = no;
     }
 }
@@ -94,7 +97,7 @@ void imprimirListaDeFrequencia(noDeFrequencia *no)
 
 //Essa função utiliza um tipo de "Buble Sort" para ordenar os elementos
 void ordenaListaDeFrequenciaEmOrdemCrescente()
-{   
+{
     noDeFrequencia *noAuxiliar = raizFrequencia;
     int frequenciaAuxiliar;
     char dadoAuxiliar;
@@ -103,7 +106,7 @@ void ordenaListaDeFrequenciaEmOrdemCrescente()
     while (noAuxiliar->proximo != NULL)
     {
         if (noAuxiliar->proximo->frequencia < noAuxiliar->frequencia)
-        {   
+        {
             //Salva os valores antigos do nó antes de serem alterados
             frequenciaAuxiliar = noAuxiliar->frequencia;
             dadoAuxiliar = noAuxiliar->dado;
@@ -123,6 +126,41 @@ void ordenaListaDeFrequenciaEmOrdemCrescente()
         //Caso a frequencia do proximo não seja menor que a frequencia do atual
         //Apenas avança para o proximo nó, fazendo uma nova verificação
         noAuxiliar = noAuxiliar->proximo;
+    }
+
+    //Existe um caso específico em que caso o primeiro nó seja menor que o segundo
+    //e exista mais a frente um menor que ele, o primeiro nó não é ordenado, sendo assim,
+    //ao final de toda a ordenação fazemos essa verificação para tratar esse caso.
+    //O código abaixo basicamente busca e a posição ideal para realocar o primeiro nó
+    //que ficou fora de ordem, essa posição tem que ser entre um nó de menor ou igual
+    //frequencia e um nó de maior frequencia.
+    if (raizFrequencia->frequencia > raizFrequencia->proximo->frequencia)
+    {
+        //Volta o nó auxiliar para a raiz
+        noAuxiliar = raizFrequencia;
+
+        //Percorre toda a lista ate chegar em um nó cuja freequencia é maior
+        //que a frequencia do nó raiz
+        while (noAuxiliar->frequencia <= raizFrequencia->frequencia)
+        {
+            noAuxiliar = noAuxiliar->proximo;
+        }
+
+        //Cria um novo nó
+        noDeFrequencia *no = malloc(sizeof(noDeFrequencia));
+
+        no->dado = raizFrequencia->dado;
+        no->anterior = noAuxiliar->anterior;
+        no->proximo = noAuxiliar;
+        no->frequencia = raizFrequencia->frequencia;
+
+        noAuxiliar->anterior->proximo = no;
+
+        //Atualiza a raiz, que agora passa a ser o proximo valor da raiz
+        raizFrequencia = raizFrequencia->proximo;
+
+        //Remove da memória o valor antigo da raiz
+        free(raizFrequencia->anterior);
     }
 }
 
@@ -150,6 +188,7 @@ int main()
     //Imprime a lista de frequencia de caracteres (essa função é apenas para debugar)
     imprimirListaDeFrequencia(raizFrequencia);
     ordenaListaDeFrequenciaEmOrdemCrescente();
+    // ordenaListaDeFrequenciaEmOrdemCrescente();
     printf("\n\n ---------- \n\n");
     imprimirListaDeFrequencia(raizFrequencia);
     return 0;
